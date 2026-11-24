@@ -1,0 +1,10 @@
+{
+  "description": "Explore AI-generated image and video prompt templates, create visual content from text or photos, and make polished AI storefront videos for creative projects.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
