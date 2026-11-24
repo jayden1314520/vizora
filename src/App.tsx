@@ -129,10 +129,15 @@ const pagePaths = {
 
 type Page = keyof typeof pagePaths;
 
+const deploymentBasePath = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const pageFromPath = (path: string): Page => {
-  const normalized = path.replace(/\/+$/, '') || '/';
+  const appPath = deploymentBasePath && path.startsWith(deploymentBasePath) ? path.slice(deploymentBasePath.length) || '/' : path;
+  const normalized = appPath.replace(/\/+$/, '') || '/';
   return (Object.entries(pagePaths).find(([, pagePath]) => pagePath === normalized)?.[0] as Page | undefined) ?? 'home';
 };
+
+const pathForPage = (page: Page) => `${deploymentBasePath}${pagePaths[page]}` || '/';
 
 function Sidebar({ active, setActive, isLoggedIn, onLogin, onLogout }: { active: string; setActive: (v: string) => void; isLoggedIn: boolean; onLogin: () => void; onLogout: () => void }) {
   const [accountOpen, setAccountOpen] = useState(false);
@@ -445,7 +450,7 @@ export default function App() {
   }, [isLoggedIn]);
 
   const goTo = (page: Page, historyMode: 'push' | 'replace' = 'push') => {
-    const path = pagePaths[page];
+    const path = pathForPage(page);
     if (window.location.pathname !== path) {
       window.history[historyMode === 'replace' ? 'replaceState' : 'pushState']({}, '', path);
     }
