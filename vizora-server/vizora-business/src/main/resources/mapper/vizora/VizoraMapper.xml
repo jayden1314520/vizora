@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.vizora.mapper.VizoraMapper">
+
+    <sql id="fileColumns">
+        file_id AS fileId, user_id AS userId, bucket, object_key AS objectKey,
+        original_name AS originalName, mime_type AS mimeType, file_size AS fileSize,
+        file_hash AS fileHash, file_usage AS fileUsage, is_public AS isPublic,
+        status, create_time AS createTime, update_time AS updateTime
+    </sql>
+
+    <insert id="insertPendingFile" parameterType="map" useGeneratedKeys="true" keyProperty="fileId">
+        INSERT INTO viz_file
+        (user_id, bucket, object_key, original_name, mime_type, file_size, file_usage, is_public, status, create_time)
+        VALUES
+        (#{userId}, #{bucket}, #{objectKey}, #{originalName}, #{mimeType}, #{fileSize}, #{usage}, #{isPublic}, #{status}, NOW())
+    </insert>
+
+    <select id="selectFileById" resultType="map">
+        SELECT <include refid="fileColumns"/> FROM viz_file
+        WHERE file_id = #{fileId} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <select id="selectFileByKey" resultType="map">
+        SELECT <include refid="fileColumns"/> FROM viz_file
+        WHERE object_key = #{objectKey} AND deleted = 0 LIMIT 1
+    </select>
+
+    <update id="confirmFile" parameterType="map">
+        UPDATE viz_file SET bucket = #{bucket}, file_hash = #{fileHash}, file_size = #{fileSize},
+            mime_type = #{mimeType}, status = #{status}, update_time = NOW()
+        WHERE object_key = #{objectKey} AND status = 'PENDING' AND deleted = 0
+    </update>
+
+    <update id="deleteFile">
+        UPDATE viz_file SET deleted = 1, update_time = NOW()
+        WHERE file_id = #{fileId} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <select id="selectTemplateList" parameterType="map" resultType="map">
+        SELECT template_id AS templateId, title, category, description, prompt,
+               cover_file_id AS coverFileId, sort_order AS sortOrder, use_count AS useCount,
+               status, create_time AS createTime, update_time AS updateTime
+        FROM viz_template
+        WHERE deleted = 0
+        <if test="category != null and category != ''">AND category = #{category}</if>
+        <if test="status != null and status != ''">AND status = #{status}</if>
+        <if test="keyword != null and keyword != ''">
+            AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY sort_order ASC, template_id DESC
+    </select>
+
+    <select id="selectTemplateById" resultType="map">
+        SELECT template_id AS templateId, title, category, description, prompt,
+               cover_file_id AS coverFileId, sort_order AS sortOrder, use_count AS useCount,
+               status, create_time AS createTime, update_time AS updateTime
+        FROM viz_template WHERE template_id = #{templateId} AND deleted = 0
+    </select>
+
+    <insert id="insertTemplate" parameterType="map" useGeneratedKeys="true" keyProperty="templateId">
+        INSERT INTO viz_template
+        (title, category, description, prompt, cover_file_id, sort_order, status, create_by, create_time)
+        VALUES
+        (#{title}, #{category}, #{description}, #{prompt}, #{coverFileId}, COALESCE(#{sortOrder}, 0),
+         COALESCE(#{status}, 'DRAFT'), #{createBy}, NOW())
+    </insert>
+
+    <update id="updateTemplate" parameterType="map">
+        UPDATE viz_template SET title = #{title}, category = #{category}, description = #{description},
+            prompt = #{prompt}, cover_file_id = #{coverFileId}, sort_order = COALESCE(#{sortOrder}, 0),
+            status = #{status}, update_by = #{updateBy}, update_time = NOW()
+        WHERE template_id = #{templateId} AND deleted = 0
+    </update>
+
+    <update id="deleteTemplates">
+        UPDATE viz_template SET deleted = 1, update_time = NOW()
+        WHERE template_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+    <select id="selectWorkList" resultType="map">
+        SELECT work_id AS workId, user_id AS userId, task_id AS taskId, title, work_type AS workType,
+               output_file_id AS outputFileId, cover_file_id AS coverFileId, prompt, status,
+               audit_status AS auditStatus, create_time AS createTime
+        FROM viz_work WHERE user_id = #{userId} AND deleted = 0
+        <if test="status != null and status != ''">AND status = #{status}</if>
+        ORDER BY work_id DESC
+    </select>
+
+    <select id="selectAdminWorkList" parameterType="map" resultType="map">
+        SELECT w.work_id AS workId, w.user_id AS userId, u.user_name AS userName,
+               w.task_id AS taskId, w.title, w.work_type AS workType,
+               w.output_file_id AS outputFileId, w.cover_file_id AS coverFileId,
+               w.prompt, w.status, w.audit_status AS auditStatus, w.create_time AS createTime
+        FROM viz_work w LEFT JOIN sys_user u ON u.user_id = w.user_id
+        WHERE w.deleted = 0
+        <if test="status != null and status != ''">AND w.audit_status = #{status}</if>
+        <if test="userId != null">AND w.user_id = #{userId}</if>
+        <if test="keyword != null and keyword != ''">AND w.title LIKE CONCAT('%', #{keyword}, '%')</if>
+        ORDER BY w.work_id DESC
+    </select>
+
+    <select id="selectWorkById" resultType="map">
+        SELECT work_id AS workId, user_id AS userId, task_id AS taskId, title, work_type AS workType,
+               output_file_id AS outputFileId, cover_file_id AS coverFileId, prompt, status,
+               audit_status AS auditStatus, create_time AS createTime
+        FROM viz_work WHERE work_id = #{workId} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <insert id="insertWork" parameterType="map" useGeneratedKeys="true" keyProperty="workId">
+        INSERT INTO viz_work
+        (user_id, task_id, title, work_type, output_file_id, cover_file_id, prompt, status, audit_status, create_time)
+        VALUES
+        (#{userId}, #{taskId}, #{title}, #{workType}, #{outputFileId}, #{coverFileId}, #{prompt},
+         #{status}, COALESCE(#{auditStatus}, 'PENDING'), NOW())
+    </insert>
+
+    <update id="updateWorkStatus">
+        UPDATE viz_work SET status = #{status},
+            output_file_id = COALESCE(#{outputFileId}, output_file_id),
+            audit_reason = COALESCE(#{failureReason}, audit_reason), update_time = NOW()
+        WHERE work_id = #{workId} AND deleted = 0
+    </update>
+
+    <update id="deleteWork">
+        UPDATE viz_work SET deleted = 1, update_time = NOW()
+        WHERE work_id = #{workId} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <insert id="insertCreationTask" parameterType="map" useGeneratedKeys="true" keyProperty="taskId">
+        INSERT INTO viz_creation_task
+        (user_id, task_type, prompt, input_file_ids, options_json, credit_cost, status, progress, create_time)
+        VALUES
+        (#{userId}, #{taskType}, #{prompt}, #{inputFileIds}, #{optionsJson}, #{creditCost}, #{status}, #{progress}, NOW())
+    </insert>
+
+    <select id="selectCreationTask" resultType="map">
+        SELECT task_id AS taskId, user_id AS userId, task_type AS taskType, prompt,
+               input_file_ids AS inputFileIds, options_json AS optionsJson, credit_cost AS creditCost,
+               status, progress, work_id AS workId, failure_reason AS failureReason,
+               create_time AS createTime, update_time AS updateTime
+        FROM viz_creation_task WHERE task_id = #{taskId} AND user_id = #{userId}
+    </select>
+
+    <select id="selectCreationTaskList" resultType="map">
+        SELECT task_id AS taskId, task_type AS taskType, prompt, credit_cost AS creditCost,
+               status, progress, work_id AS workId, failure_reason AS failureReason,
+               create_time AS createTime, update_time AS updateTime
+        FROM viz_creation_task WHERE user_id = #{userId} ORDER BY task_id DESC
+    </select>
+
+    <update id="updateCreationTaskStatus">
+        UPDATE viz_creation_task SET status = #{status}, progress = COALESCE(#{progress}, progress),
+            work_id = COALESCE(#{workId}, work_id), failure_reason = #{failureReason}, update_time = NOW()
+        WHERE task_id = #{taskId}
+    </update>
+
+    <insert id="ensureCreditAccount">
+        INSERT IGNORE INTO viz_credit_account (user_id, balance, total_granted, total_consumed, create_time)
+        VALUES (#{userId}, 200, 200, 0, NOW())
+    </insert>
+
+    <select id="selectCreditAccount" resultType="map">
+        SELECT user_id AS userId, balance, total_granted AS totalGranted,
+               total_consumed AS totalConsumed, update_time AS updateTime
+        FROM viz_credit_account WHERE user_id = #{userId}
+    </select>
+
+    <update id="deductCredits">
+        UPDATE viz_credit_account SET balance = balance - #{amount}, total_consumed = total_consumed + #{amount},
+            update_time = NOW() WHERE user_id = #{userId} AND balance &gt;= #{amount}
+    </update>
+
+    <update id="addCredits">
+        UPDATE viz_credit_account SET balance = balance + #{amount}, update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <insert id="insertCreditRecord" parameterType="map" useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO viz_credit_record
+        (user_id, record_type, amount, biz_type, biz_id, title, detail, create_time)
+        VALUES
+        (#{userId}, #{recordType}, #{amount}, #{bizType}, #{bizId}, #{title}, #{detail}, NOW())
+    </insert>
+
+    <select id="selectCreditRecords" resultType="map">
+        SELECT record_id AS recordId, record_type AS recordType, amount, biz_type AS bizType,
+               biz_id AS bizId, title, detail, create_time AS createTime
+        FROM viz_credit_record WHERE user_id = #{userId}
+        <if test="type != null and type != ''">AND record_type = #{type}</if>
+        ORDER BY record_id DESC
+    </select>
+
+    <select id="selectNotificationList" resultType="map">
+        SELECT n.notification_id AS notificationId, n.notification_type AS notificationType,
+               n.title, n.content, n.biz_type AS bizType, n.biz_id AS bizId,
+               n.create_time AS createTime, IF(r.notification_id IS NULL, 0, 1) AS isRead
+        FROM viz_notification n
+        LEFT JOIN viz_notification_read r ON r.notification_id = n.notification_id AND r.user_id = #{userId}
+        WHERE n.status = 'PUBLISHED' AND (n.user_id IS NULL OR n.user_id = #{userId})
+        <if test="type != null and type != ''">AND n.notification_type = #{type}</if>
+        ORDER BY n.notification_id DESC
+    </select>
+
+    <insert id="markNotificationRead">
+        INSERT IGNORE INTO viz_notification_read (notification_id, user_id, read_time)
+        VALUES (#{notificationId}, #{userId}, NOW())
+    </insert>
+
+    <insert id="markAllNotificationsRead">
+        INSERT IGNORE INTO viz_notification_read (notification_id, user_id, read_time)
+        SELECT notification_id, #{userId}, NOW() FROM viz_notification
+        WHERE status = 'PUBLISHED' AND (user_id IS NULL OR user_id = #{userId})
+    </insert>
+</mapper>

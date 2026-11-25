@@ -139,7 +139,7 @@ const pageFromPath = (path: string): Page => {
 
 const pathForPage = (page: Page) => `${deploymentBasePath}${pagePaths[page]}` || '/';
 
-function Sidebar({ active, setActive, isLoggedIn, onLogin, onLogout }: { active: string; setActive: (v: string) => void; isLoggedIn: boolean; onLogin: () => void; onLogout: () => void }) {
+function Sidebar({ active, setActive, isLoggedIn, onLogin, onLogout }: { active: Page; setActive: (v: Page) => void; isLoggedIn: boolean; onLogin: () => void; onLogout: () => void }) {
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -150,7 +150,7 @@ function Sidebar({ active, setActive, isLoggedIn, onLogin, onLogout }: { active:
     document.addEventListener('pointerdown', closeOutside);
     return () => document.removeEventListener('pointerdown', closeOutside);
   }, [accountOpen]);
-  const items = [
+  const items: Array<{ id: Page; label: string; icon: IconName }> = [
     { id: 'home', label: '首页', icon: 'home' as IconName },
     { id: 'create', label: '创作', icon: 'spark' as IconName },
     { id: 'works', label: '作品', icon: 'folder' as IconName },
@@ -174,7 +174,7 @@ function Sidebar({ active, setActive, isLoggedIn, onLogin, onLogout }: { active:
   </aside>
 }
 
-function Topbar({ isLoggedIn, onLogin, onNavigate, onSelectTemplate }: { isLoggedIn: boolean; onLogin: () => void; onNavigate: (page: string) => void; onSelectTemplate: (template: typeof templates[number]) => void }) {
+function Topbar({ isLoggedIn, onLogin, onNavigate, onSelectTemplate }: { isLoggedIn: boolean; onLogin: () => void; onNavigate: (page: Page) => void; onSelectTemplate: (template: typeof templates[number]) => void }) {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [query, setQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
@@ -396,7 +396,7 @@ function NotificationsPage() {
   </div>
 }
 
-function Profile({ setActive, startCreate }: { setActive: (v: string) => void; startCreate: (type: string, prompt?: string) => void }) {
+function Profile({ setActive, startCreate }: { setActive: (v: Page) => void; startCreate: (type: string, prompt?: string) => void }) {
   const [dialog, setDialog] = useState<'edit' | null>(null);
   const [selected, setSelected] = useState<typeof templates[number] | null>(null);
   const [name, setName] = useState(() => localStorage.getItem('muse-profile-name') || 'Yun Lin');

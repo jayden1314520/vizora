@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: vizora
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-vizora-dev-password}
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./vizora-server/sql/ry_20261117.sql:/docker-entrypoint-initdb.d/01-ruoyi.sql:ro
+      - ./vizora-server/sql/quartz.sql:/docker-entrypoint-initdb.d/02-quartz.sql:ro
+      - ./vizora-server/sql/vizora.sql:/docker-entrypoint-initdb.d/03-vizora.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD:-vizora-dev-password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  vizora-server:
+    build: ./vizora-server
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: vizora
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-vizora-dev-password}
+      REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET:-replace-this-production-jwt-secret-32-chars}
+      QINIU_ACCESS_KEY: ${QINIU_ACCESS_KEY:-}
+      QINIU_SECRET_KEY: ${QINIU_SECRET_KEY:-}
+      QINIU_BUCKET_PRIVATE: ${QINIU_BUCKET_PRIVATE:-vizora-private}
+      QINIU_BUCKET_PUBLIC: ${QINIU_BUCKET_PUBLIC:-vizora-public}
+      QINIU_PRIVATE_DOMAIN: ${QINIU_PRIVATE_DOMAIN:-}
+      QINIU_PUBLIC_DOMAIN: ${QINIU_PUBLIC_DOMAIN:-}
+      QINIU_CALLBACK_URL: ${QINIU_CALLBACK_URL:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  vizora-admin:
+    build: ./vizora-admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - vizora-server
+
+volumes:
+  mysql-data:
+  redis-data:
