@@ -78,8 +78,8 @@ const getLogoTextColor = computed(() => {
       display:inline-block;width:23px;height:23px;border:2px solid #b9ef45;border-radius:8px;position:relative;overflow:hidden;
       vertical-align: middle;
       margin-right: 8px;
-      & span{display:block;width:7px;height:7px;border-radius:50%;background:#b9ef45;position:absolute;left:6px;top:6px;box-shadow:0 0 0 3px rgba(185,239,69,.12)}
-      &:after{content:'';position:absolute;width:32px;height:2px;background:#b9ef45;left:-6px;top:10px;transform:rotate(-45deg);opacity:.9}
+      & span{display:block;width:7px;height:7px;border-radius:50%;background:#d8ff62;position:absolute;left:6px;top:6px;box-shadow:0 0 0 3px rgba(216,255,98,.12)}
+      &:after{content:'';position:absolute;width:32px;height:2px;background:#d8ff62;left:-6px;top:10px;transform:rotate(-45deg);opacity:.9}
     }
 
     & .sidebar-title {
