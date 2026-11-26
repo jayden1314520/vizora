@@ -10,7 +10,6 @@
       </el-form-item>
       <el-form-item><el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button><el-button icon="Refresh" @click="resetQuery">重置</el-button></el-form-item>
     </el-form>
-    <el-row class="mb8"><right-toolbar v-model:showSearch="showSearch" @queryTable="getList" /></el-row>
     <el-table v-loading="loading" :data="rows">
       <el-table-column label="作品ID" prop="workId" width="90" align="center" />
       <el-table-column label="作品名称" prop="title" min-width="180" show-overflow-tooltip />
