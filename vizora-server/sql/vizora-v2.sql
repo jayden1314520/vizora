@@ -14,8 +14,8 @@ INSERT IGNORE INTO sys_menu VALUES (3003, '生成记录', 3000, 3, 'task', 'vizo
 INSERT IGNORE INTO sys_menu VALUES (3004, '大模型配置', 3000, 4, 'model', 'vizora/model/index', '', '', 1, 0, 'C', '0', '0', 'vizora:model:list', 'edit', 'admin', NOW(), '', NULL, '模型供应商与路由');
 INSERT IGNORE INTO sys_menu VALUES (3005, '购买配置', 3000, 5, 'package', 'vizora/package/index', '', '', 1, 0, 'C', '0', '0', 'vizora:package:list', 'money', 'admin', NOW(), '', NULL, '算力购买套餐');
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3003), (1, 3004), (1, 3005);
-INSERT IGNORE INTO sys_menu VALUES (3006, '用户管理', 3000, 6, 'user', 'system/user/index', '', '', 1, 0, 'C', '0', '0', 'system:user:list', 'user', 'admin', NOW(), '', NULL, 'Web 端用户与资产');
-INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3006);
+DELETE FROM sys_role_menu WHERE menu_id = 3006;
+DELETE FROM sys_menu WHERE menu_id = 3006;
 INSERT IGNORE INTO sys_menu VALUES (3007, 'Web用户', 3000, 7, 'web-user', 'vizora/user/index', '', '', 1, 0, 'C', '0', '0', 'vizora:web-user:list', 'peoples', 'admin', NOW(), '', NULL, 'Web端注册用户');
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3007);
 INSERT IGNORE INTO sys_menu VALUES (3008, '运营看板', 3000, 1, 'dashboard', 'index', '', '', 1, 0, 'C', '0', '0', 'vizora:dashboard:list', 'chart', 'admin', NOW(), '', NULL, '真实运营统计');

@@ -9,3 +9,4 @@ export const addPackage = data => request({ url: '/vizora/package', method: 'pos
 export const updatePackage = data => request({ url: '/vizora/package', method: 'put', data })
 export const delPackage = ids => request({ url: `/vizora/package/${ids}`, method: 'delete' })
 export const getDashboardStats = period => request({ url: '/vizora/dashboard/stats', method: 'get', params: { period } })
+export const getWebUserDetail = userId => request({ url: `/vizora/web-user/${userId}/detail`, method: 'get' })

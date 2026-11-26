@@ -116,4 +116,7 @@ public class VizoraAdminController extends BaseController
     @PreAuthorize("@ss.hasPermi('vizora:dashboard:list')")
     @GetMapping("/dashboard/stats")
     public AjaxResult dashboardStats(@RequestParam(defaultValue = "day") String period) { return success(service.dashboardStats(period)); }
+    @PreAuthorize("@ss.hasPermi('vizora:web-user:list')")
+    @GetMapping("/web-user/{userId}/detail")
+    public AjaxResult webUserDetail(@PathVariable Long userId) { Map<String,Object> data=new HashMap<>(); data.put("creditRecords", service.creditRecords(userId, null)); data.put("tasks", service.tasks(userId)); return success(data); }
 }
