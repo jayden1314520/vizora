@@ -38,24 +38,24 @@
     </update>
 
     <select id="selectTemplateList" parameterType="map" resultType="map">
-        SELECT template_id AS templateId, title, category, description, prompt,
-               cover_file_id AS coverFileId, sort_order AS sortOrder, use_count AS useCount,
-               status, create_time AS createTime, update_time AS updateTime
-        FROM viz_template
-        WHERE deleted = 0
-        <if test="category != null and category != ''">AND category = #{category}</if>
-        <if test="status != null and status != ''">AND status = #{status}</if>
+        SELECT t.template_id AS templateId, t.title, t.category, t.description, t.prompt,
+               t.cover_file_id AS coverFileId, f.object_key AS coverUrl, t.sort_order AS sortOrder, t.use_count AS useCount,
+               t.status, t.create_time AS createTime, t.update_time AS updateTime
+        FROM viz_template t LEFT JOIN viz_file f ON f.file_id = t.cover_file_id
+        WHERE t.deleted = 0
+        <if test="category != null and category != ''">AND t.category = #{category}</if>
+        <if test="status != null and status != ''">AND t.status = #{status}</if>
         <if test="keyword != null and keyword != ''">
-            AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+            AND (t.title LIKE CONCAT('%', #{keyword}, '%') OR t.description LIKE CONCAT('%', #{keyword}, '%'))
         </if>
         ORDER BY sort_order ASC, template_id DESC
     </select>
 
     <select id="selectTemplateById" resultType="map">
-        SELECT template_id AS templateId, title, category, description, prompt,
-               cover_file_id AS coverFileId, sort_order AS sortOrder, use_count AS useCount,
-               status, create_time AS createTime, update_time AS updateTime
-        FROM viz_template WHERE template_id = #{templateId} AND deleted = 0
+        SELECT t.template_id AS templateId, t.title, t.category, t.description, t.prompt,
+               t.cover_file_id AS coverFileId, f.object_key AS coverUrl, t.sort_order AS sortOrder, t.use_count AS useCount,
+               t.status, t.create_time AS createTime, t.update_time AS updateTime
+        FROM viz_template t LEFT JOIN viz_file f ON f.file_id = t.cover_file_id WHERE t.template_id = #{templateId} AND t.deleted = 0
     </select>
 
     <insert id="insertTemplate" parameterType="map" useGeneratedKeys="true" keyProperty="templateId">
@@ -78,6 +78,16 @@
         WHERE template_id IN
         <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>
     </update>
+
+    <select id="selectModelConfigs" parameterType="map" resultType="map">SELECT config_id AS configId, config_name AS configName, provider, model_name AS modelName, endpoint, api_key AS apiKey, task_types AS taskTypes, enabled, sort_order AS sortOrder, remark, create_time AS createTime FROM viz_model_config WHERE 1=1 <if test="keyword != null and keyword != ''">AND (config_name LIKE CONCAT('%', #{keyword}, '%') OR model_name LIKE CONCAT('%', #{keyword}, '%'))</if> ORDER BY sort_order ASC, config_id DESC</select>
+    <insert id="insertModelConfig" parameterType="map" useGeneratedKeys="true" keyProperty="configId">INSERT INTO viz_model_config (config_name, provider, model_name, endpoint, api_key, task_types, enabled, sort_order, remark, create_by) VALUES (#{configName},#{provider},#{modelName},#{endpoint},#{apiKey},#{taskTypes},COALESCE(#{enabled},1),COALESCE(#{sortOrder},0),#{remark},#{createBy})</insert>
+    <update id="updateModelConfig" parameterType="map">UPDATE viz_model_config SET config_name=#{configName}, provider=#{provider}, model_name=#{modelName}, endpoint=#{endpoint}, api_key=COALESCE(#{apiKey},api_key), task_types=#{taskTypes}, enabled=#{enabled}, sort_order=#{sortOrder}, remark=#{remark}, update_by=#{updateBy}, update_time=NOW() WHERE config_id=#{configId}</update>
+    <delete id="deleteModelConfigs">DELETE FROM viz_model_config WHERE config_id IN <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach></delete>
+    <select id="selectCreditPackages" parameterType="map" resultType="map">SELECT package_id AS packageId, package_name AS packageName, credits, price, original_price AS originalPrice, bonus_credits AS bonusCredits, enabled, sort_order AS sortOrder, description FROM viz_credit_package ORDER BY sort_order ASC, package_id DESC</select>
+    <insert id="insertCreditPackage" parameterType="map" useGeneratedKeys="true" keyProperty="packageId">INSERT INTO viz_credit_package (package_name, credits, price, original_price, bonus_credits, enabled, sort_order, description, create_by) VALUES (#{packageName},#{credits},#{price},#{originalPrice},#{bonusCredits},#{enabled},#{sortOrder},#{description},#{createBy})</insert>
+    <update id="updateCreditPackage" parameterType="map">UPDATE viz_credit_package SET package_name=#{packageName}, credits=#{credits}, price=#{price}, original_price=#{originalPrice}, bonus_credits=#{bonusCredits}, enabled=#{enabled}, sort_order=#{sortOrder}, description=#{description}, update_by=#{updateBy}, update_time=NOW() WHERE package_id=#{packageId}</update>
+    <delete id="deleteCreditPackages">DELETE FROM viz_credit_package WHERE package_id IN <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach></delete>
+    <select id="selectTaskAdminList" parameterType="map" resultType="map">SELECT task_id AS taskId, user_id AS userId, task_type AS taskType, prompt, credit_cost AS creditCost, status, progress, provider_task_id AS providerTaskId, work_id AS workId, failure_reason AS failureReason, create_time AS createTime, update_time AS updateTime FROM viz_creation_task WHERE 1=1 <if test="status != null and status != ''">AND status=#{status}</if> <if test="keyword != null and keyword != ''">AND prompt LIKE CONCAT('%',#{keyword},'%')</if> ORDER BY task_id DESC</select>
 
     <select id="selectWorkList" resultType="map">
         SELECT work_id AS workId, user_id AS userId, task_id AS taskId, title, work_type AS workType,

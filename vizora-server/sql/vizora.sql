@@ -40,6 +40,56 @@ CREATE TABLE IF NOT EXISTS viz_template (
   KEY idx_viz_template_status (status, category, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='灵感模板';
 
+ALTER TABLE viz_template ADD COLUMN IF NOT EXISTS cover_file_id BIGINT DEFAULT NULL AFTER prompt;
+
+CREATE TABLE IF NOT EXISTS viz_model_config (
+  config_id BIGINT NOT NULL AUTO_INCREMENT,
+  config_name VARCHAR(100) NOT NULL,
+  provider VARCHAR(40) NOT NULL,
+  model_name VARCHAR(100) NOT NULL,
+  endpoint VARCHAR(500) DEFAULT NULL,
+  api_key VARCHAR(500) DEFAULT NULL,
+  task_types VARCHAR(200) DEFAULT NULL,
+  enabled TINYINT NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
+  remark VARCHAR(500) DEFAULT NULL,
+  create_by VARCHAR(64) DEFAULT NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_by VARCHAR(64) DEFAULT NULL,
+  update_time DATETIME DEFAULT NULL,
+  PRIMARY KEY (config_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='大模型配置';
+
+CREATE TABLE IF NOT EXISTS viz_credit_package (
+  package_id BIGINT NOT NULL AUTO_INCREMENT,
+  package_name VARCHAR(100) NOT NULL,
+  credits BIGINT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  original_price DECIMAL(10,2) DEFAULT NULL,
+  bonus_credits BIGINT NOT NULL DEFAULT 0,
+  enabled TINYINT NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
+  description VARCHAR(500) DEFAULT NULL,
+  create_by VARCHAR(64) DEFAULT NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_by VARCHAR(64) DEFAULT NULL,
+  update_time DATETIME DEFAULT NULL,
+  PRIMARY KEY (package_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='算力购买配置';
+
+CREATE TABLE IF NOT EXISTS viz_purchase_order (
+  order_id BIGINT NOT NULL AUTO_INCREMENT,
+  order_no VARCHAR(40) NOT NULL,
+  user_id BIGINT NOT NULL,
+  package_id BIGINT NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  credits BIGINT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  paid_time DATETIME DEFAULT NULL,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (order_id), UNIQUE KEY uk_viz_order_no (order_no), KEY idx_viz_order_user (user_id, create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='算力购买订单';
+
 CREATE TABLE IF NOT EXISTS viz_creation_task (
   task_id          BIGINT NOT NULL AUTO_INCREMENT,
   user_id          BIGINT NOT NULL,
@@ -150,14 +200,21 @@ INSERT INTO viz_notification (notification_type, title, content, status) VALUES
 ('SYSTEM', '欢迎使用 VIZORA', '登录后即可领取 200 算力，开始你的第一次 AI 创作。', 'PUBLISHED'),
 ('ACTIVITY', '邀请好友奖励', '每邀请一位好友完成注册，双方都可获得 200 算力。', 'PUBLISHED');
 
+INSERT INTO viz_credit_package (package_name, credits, price, original_price, bonus_credits, sort_order, description)
+VALUES ('基础算力包', 1000, 9.90, 12.90, 0, 10, '适合首次体验'), ('专业算力包', 5000, 39.90, 59.90, 500, 20, '高频创作者推荐'), ('旗舰算力包', 20000, 129.00, 199.00, 3000, 30, '团队与商业创作');
+
 -- 若依后台菜单与权限
 INSERT INTO sys_menu VALUES (3000, 'VIZORA运营', 0, 6, 'vizora', NULL, '', '', 1, 0, 'M', '0', '0', '', 'dashboard', 'admin', NOW(), '', NULL, 'AI创作平台运营');
 INSERT INTO sys_menu VALUES (3001, '灵感模板', 3000, 1, 'template', 'vizora/template/index', '', '', 1, 0, 'C', '0', '0', 'vizora:template:list', 'picture', 'admin', NOW(), '', NULL, '模板管理');
 INSERT INTO sys_menu VALUES (3002, '作品审核', 3000, 2, 'work', 'vizora/work/index', '', '', 1, 0, 'C', '0', '0', 'vizora:work:list', 'example', 'admin', NOW(), '', NULL, '作品审核');
+INSERT INTO sys_menu VALUES (3003, '生成记录', 3000, 3, 'task', 'vizora/task/index', '', '', 1, 0, 'C', '0', '0', 'vizora:task:list', 'log', 'admin', NOW(), '', NULL, '全部 AI 生成任务');
+INSERT INTO sys_menu VALUES (3004, '大模型配置', 3000, 4, 'model', 'vizora/model/index', '', '', 1, 0, 'C', '0', '0', 'vizora:model:list', 'edit', 'admin', NOW(), '', NULL, '模型供应商与路由');
+INSERT INTO sys_menu VALUES (3005, '购买配置', 3000, 5, 'package', 'vizora/package/index', '', '', 1, 0, 'C', '0', '0', 'vizora:package:list', 'money', 'admin', NOW(), '', NULL, '算力购买套餐');
+INSERT INTO sys_menu VALUES (3006, '用户管理', 3000, 6, 'user', 'system/user/index', '', '', 1, 0, 'C', '0', '0', 'system:user:list', 'user', 'admin', NOW(), '', NULL, '用户、作品、算力账户');
 INSERT INTO sys_menu VALUES (3011, '模板查询', 3001, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'vizora:template:query', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_menu VALUES (3012, '模板新增', 3001, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'vizora:template:add', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_menu VALUES (3013, '模板修改', 3001, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'vizora:template:edit', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_menu VALUES (3014, '模板删除', 3001, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'vizora:template:remove', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_menu VALUES (3021, '作品审核', 3002, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'vizora:work:audit', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
-(1, 3000), (1, 3001), (1, 3002), (1, 3011), (1, 3012), (1, 3013), (1, 3014), (1, 3021);
+(1, 3000), (1, 3001), (1, 3002), (1, 3003), (1, 3004), (1, 3005), (1, 3006), (1, 3011), (1, 3012), (1, 3013), (1, 3014), (1, 3021);

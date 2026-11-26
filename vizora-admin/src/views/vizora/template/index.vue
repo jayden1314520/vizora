@@ -30,6 +30,7 @@
     <el-table v-loading="loading" :data="rows" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" prop="templateId" width="80" align="center" />
+      <el-table-column label="封面" width="100" align="center"><template #default="scope"><el-image v-if="scope.row.coverUrl" :src="scope.row.coverUrl" fit="cover" style="width:64px;height:40px;border-radius:4px" /><span v-else class="text-muted">未设置</span></template></el-table-column>
       <el-table-column label="模板名称" prop="title" min-width="180" show-overflow-tooltip />
       <el-table-column label="创作类型" prop="category" width="130">
         <template #default="scope"><el-tag effect="plain">{{ categoryLabel(scope.row.category) }}</el-tag></template>
@@ -57,6 +58,7 @@
           <el-col :span="12"><el-form-item label="发布状态" prop="status"><el-select v-model="form.status" style="width: 100%"><el-option label="草稿" value="DRAFT" /><el-option label="已发布" value="PUBLISHED" /><el-option label="已下线" value="OFFLINE" /></el-select></el-form-item></el-col>
         </el-row>
         <el-form-item label="模板描述" prop="description"><el-input v-model="form.description" type="textarea" :rows="2" maxlength="500" show-word-limit /></el-form-item>
+        <el-form-item label="封面地址" prop="coverUrl"><el-input v-model="form.coverUrl" placeholder="填写七牛公开访问地址" /></el-form-item>
         <el-form-item label="提示词" prop="prompt"><el-input v-model="form.prompt" type="textarea" :rows="6" maxlength="2000" show-word-limit /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sortOrder" :min="0" :max="9999" /></el-form-item>
       </el-form>
@@ -102,7 +104,7 @@ const statusType = value => ({ DRAFT: 'info', PUBLISHED: 'success', OFFLINE: 'wa
 async function getList() { loading.value = true; try { const res = await listTemplate(queryParams.value); rows.value = res.rows; total.value = res.total } finally { loading.value = false } }
 function handleQuery() { queryParams.value.pageNum = 1; getList() }
 function resetQuery() { proxy.resetForm('queryRef'); handleQuery() }
-function reset() { form.value = { templateId: undefined, title: '', category: 'text-image', description: '', prompt: '', sortOrder: 0, status: 'DRAFT' }; proxy.resetForm('templateRef') }
+function reset() { form.value = { templateId: undefined, title: '', category: 'text-image', description: '', prompt: '', coverFileId: undefined, coverUrl: '', sortOrder: 0, status: 'DRAFT' }; proxy.resetForm('templateRef') }
 function handleAdd() { reset(); title.value = '新增灵感模板'; open.value = true }
 async function handleUpdate(row) { reset(); const id = row?.templateId || ids.value[0]; const res = await getTemplate(id); form.value = res.data; title.value = '修改灵感模板'; open.value = true }
 function handleSelectionChange(selection) { ids.value = selection.map(item => item.templateId); single.value = selection.length !== 1; multiple.value = !selection.length }

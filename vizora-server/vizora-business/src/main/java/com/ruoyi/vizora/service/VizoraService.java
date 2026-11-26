@@ -104,5 +104,14 @@ public class VizoraService
     public int insertTemplate(Map<String, Object> template) { return mapper.insertTemplate(template); }
     public int updateTemplate(Map<String, Object> template) { return mapper.updateTemplate(template); }
     public int deleteTemplates(Long[] ids) { return mapper.deleteTemplates(ids); }
+    public List<Map<String, Object>> modelConfigs(Map<String, Object> query) { return mapper.selectModelConfigs(query); }
+    public int insertModelConfig(Map<String, Object> config) { return mapper.insertModelConfig(config); }
+    public int updateModelConfig(Map<String, Object> config) { return mapper.updateModelConfig(config); }
+    public int deleteModelConfigs(Long[] ids) { return mapper.deleteModelConfigs(ids); }
+    public List<Map<String, Object>> creditPackages(Map<String, Object> query) { return mapper.selectCreditPackages(query); }
+    public int insertCreditPackage(Map<String, Object> info) { return mapper.insertCreditPackage(info); }
+    public int updateCreditPackage(Map<String, Object> info) { return mapper.updateCreditPackage(info); }
+    public int deleteCreditPackages(Long[] ids) { return mapper.deleteCreditPackages(ids); }
+    public List<Map<String, Object>> adminTasks(Map<String, Object> query) { return mapper.selectTaskAdminList(query); }
     public int moderateWork(Long workId, String status, String reason) { return mapper.updateWorkAuditStatus(workId, status, reason); }
 }

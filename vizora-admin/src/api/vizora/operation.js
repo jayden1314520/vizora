@@ -1,0 +1,10 @@
+import request from '@/utils/request'
+export const listTasks = query => request({ url: '/vizora/task/list', method: 'get', params: query })
+export const listModels = query => request({ url: '/vizora/model/list', method: 'get', params: query })
+export const addModel = data => request({ url: '/vizora/model', method: 'post', data })
+export const updateModel = data => request({ url: '/vizora/model', method: 'put', data })
+export const delModel = ids => request({ url: `/vizora/model/${ids}`, method: 'delete' })
+export const listPackages = () => request({ url: '/vizora/package/list', method: 'get' })
+export const addPackage = data => request({ url: '/vizora/package', method: 'post', data })
+export const updatePackage = data => request({ url: '/vizora/package', method: 'put', data })
+export const delPackage = ids => request({ url: `/vizora/package/${ids}`, method: 'delete' })

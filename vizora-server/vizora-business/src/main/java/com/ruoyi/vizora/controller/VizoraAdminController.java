@@ -94,4 +94,23 @@ public class VizoraAdminController extends BaseController
     {
         return toAjax(service.moderateWork(workId, body.get("status"), body.get("reason")));
     }
+
+    @PreAuthorize("@ss.hasPermi('vizora:task:list')") @GetMapping("/task/list")
+    public TableDataInfo taskList(@RequestParam(required = false) String status, @RequestParam(required = false) String keyword) { startPage(); Map<String,Object> q=new HashMap<>(); q.put("status", status); q.put("keyword", keyword); return getDataTable(service.adminTasks(q)); }
+    @PreAuthorize("@ss.hasPermi('vizora:model:list')") @GetMapping("/model/list")
+    public TableDataInfo modelList(@RequestParam(required = false) String keyword) { startPage(); Map<String,Object> q=new HashMap<>(); q.put("keyword", keyword); return getDataTable(service.modelConfigs(q)); }
+    @PreAuthorize("@ss.hasPermi('vizora:model:add')") @PostMapping("/model")
+    public AjaxResult addModel(@RequestBody Map<String,Object> body) { body.put("createBy", getUsername()); return toAjax(service.insertModelConfig(body)); }
+    @PreAuthorize("@ss.hasPermi('vizora:model:edit')") @PutMapping("/model")
+    public AjaxResult editModel(@RequestBody Map<String,Object> body) { body.put("updateBy", getUsername()); return toAjax(service.updateModelConfig(body)); }
+    @PreAuthorize("@ss.hasPermi('vizora:model:remove')") @DeleteMapping("/model/{ids}")
+    public AjaxResult removeModel(@PathVariable Long[] ids) { return toAjax(service.deleteModelConfigs(ids)); }
+    @PreAuthorize("@ss.hasPermi('vizora:package:list')") @GetMapping("/package/list")
+    public TableDataInfo packageList() { startPage(); return getDataTable(service.creditPackages(new HashMap<>())); }
+    @PreAuthorize("@ss.hasPermi('vizora:package:add')") @PostMapping("/package")
+    public AjaxResult addPackage(@RequestBody Map<String,Object> body) { body.put("createBy", getUsername()); return toAjax(service.insertCreditPackage(body)); }
+    @PreAuthorize("@ss.hasPermi('vizora:package:edit')") @PutMapping("/package")
+    public AjaxResult editPackage(@RequestBody Map<String,Object> body) { body.put("updateBy", getUsername()); return toAjax(service.updateCreditPackage(body)); }
+    @PreAuthorize("@ss.hasPermi('vizora:package:remove')") @DeleteMapping("/package/{ids}")
+    public AjaxResult removePackage(@PathVariable Long[] ids) { return toAjax(service.deleteCreditPackages(ids)); }
 }
