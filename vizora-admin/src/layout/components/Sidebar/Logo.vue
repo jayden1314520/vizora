@@ -75,11 +75,11 @@ const getLogoTextColor = computed(() => {
     width: 100%;
 
     & .sidebar-logo-mark {
-      display:inline-block;width:23px;height:23px;border:2px solid #b9ef45;border-radius:8px;position:relative;overflow:hidden;
+      display:inline-block;width:23px;height:23px;border:2px solid #6e8f09;border-radius:8px;position:relative;overflow:hidden;
       vertical-align: middle;
       margin-right: 8px;
-      & span{display:block;width:7px;height:7px;border-radius:50%;background:#d8ff62;position:absolute;left:6px;top:6px;box-shadow:0 0 0 3px rgba(216,255,98,.12)}
-      &:after{content:'';position:absolute;width:32px;height:2px;background:#d8ff62;left:-6px;top:10px;transform:rotate(-45deg);opacity:.9}
+      & span{display:block;width:7px;height:7px;border-radius:50%;background:#6e8f09;position:absolute;left:6px;top:6px;box-shadow:0 0 0 3px rgba(110,143,9,.18)}
+      &:after{content:'';position:absolute;width:32px;height:2px;background:#6e8f09;left:-6px;top:10px;transform:rotate(-45deg);opacity:.9}
     }
 
     & .sidebar-title {
@@ -91,7 +91,7 @@ const getLogoTextColor = computed(() => {
       font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
-      small{font-size:12px;color:#b9ef45;font-weight:500}
+      small{font-size:12px;color:#6e8f09;font-weight:500}
     }
   }
 
