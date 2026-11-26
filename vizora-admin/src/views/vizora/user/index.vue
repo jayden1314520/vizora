@@ -3,7 +3,7 @@
 import { listUser, changeUserStatus, delUser } from '@/api/system/user'
 import { getWebUserDetail } from '@/api/vizora/operation'
 const { proxy }=getCurrentInstance(), rows=ref([]), loading=ref(false), detailOpen=ref(false), current=ref({}), detail=ref({creditRecords:[],tasks:[]}), query=reactive({keyword:undefined})
-async function load(){loading.value=true;try{const res=await listUser({userName:query.keyword,phonenumber:query.keyword,email:query.keyword});rows.value=res.rows||[]}finally{loading.value=false}}
+async function load(){loading.value=true;try{const res=await listUser({userName:query.keyword,phonenumber:query.keyword,email:query.keyword});rows.value=(res.rows||[]).filter(user=>!['admin','ry'].includes(user.userName))}finally{loading.value=false}}
 async function showDetail(row){current.value=row;const res=await getWebUserDetail(row.userId);detail.value=res.data||{creditRecords:[],tasks:[]};detailOpen.value=true}
 async function toggleStatus(row){await changeUserStatus(row.userId,row.status==='0'?'1':'0');proxy.$modal.msgSuccess('状态已更新');load()}
 async function removeUser(row){await proxy.$modal.confirm(`确认删除用户 ${row.userName} 吗？`);await delUser(row.userId);proxy.$modal.msgSuccess('删除成功');load()}
