@@ -14,6 +14,8 @@ INSERT IGNORE INTO sys_menu VALUES (3005, '购买配置', 3000, 5, 'package', 'v
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3003), (1, 3004), (1, 3005);
 INSERT IGNORE INTO sys_menu VALUES (3006, '用户管理', 3000, 6, 'user', 'system/user/index', '', '', 1, 0, 'C', '0', '0', 'system:user:list', 'user', 'admin', NOW(), '', NULL, 'Web 端用户与资产');
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3006);
+INSERT IGNORE INTO sys_menu VALUES (3007, 'Web用户', 3000, 7, 'web-user', 'vizora/user/index', '', '', 1, 0, 'C', '0', '0', 'vizora:web-user:list', 'peoples', 'admin', NOW(), '', NULL, 'Web端注册用户');
+INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3007);
 INSERT IGNORE INTO sys_dict_type (dict_name, dict_type, status, create_by, create_time, remark) VALUES ('AI任务类型', 'vizora_task_type', '0', 'admin', NOW(), '模型支持的生成任务类型');
 INSERT IGNORE INTO sys_dict_data (dict_sort, dict_label, dict_value, dict_type, list_class, is_default, status, create_by, create_time, remark)
 SELECT 1, '文生图', 'text-image', 'vizora_task_type', 'primary', 'Y', '0', 'admin', NOW(), '文本生成图片' WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='vizora_task_type' AND dict_value='text-image');
