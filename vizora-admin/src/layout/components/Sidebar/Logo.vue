@@ -2,19 +2,19 @@
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <span v-if="logo" class="sidebar-logo-mark"><span /></span>
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
+        <span class="sidebar-logo-mark"><span /></span>
+        <h1 class="sidebar-title">VIZORA <small>中台</small></h1>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script setup>
-import logo from '@/assets/logo/logo.png'
+const logo = true
 import useSettingsStore from '@/store/modules/settings'
 import variables from '@/assets/styles/variables.module.scss'
 
@@ -74,11 +74,11 @@ const getLogoTextColor = computed(() => {
     height: 100%;
     width: 100%;
 
-    & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+    & .sidebar-logo-mark {
+      display:inline-block;width:32px;height:32px;border:3px solid #b9ef45;transform:rotate(45deg);position:relative;
       vertical-align: middle;
       margin-right: 12px;
+      & span{display:block;width:9px;height:9px;border-radius:50%;background:#b9ef45;position:absolute;left:9px;top:9px}
     }
 
     & .sidebar-title {
@@ -87,14 +87,15 @@ const getLogoTextColor = computed(() => {
       color: v-bind(getLogoTextColor);
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
+      small{font-size:12px;color:#b9ef45;font-weight:500}
     }
   }
 
   &.collapse {
-    .sidebar-logo {
+    .sidebar-logo-mark {
       margin-right: 0px;
     }
   }
