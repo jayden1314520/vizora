@@ -1,5 +1,7 @@
 -- VIZORA 运营扩展迁移，可重复执行
 USE vizora;
+DELETE FROM sys_role_menu WHERE menu_id = 4;
+DELETE FROM sys_menu WHERE menu_id = 4;
 INSERT IGNORE INTO sys_config (config_name, config_key, config_value, config_type, create_by, remark) VALUES
 ('七牛 Access Key', 'vizora.qiniu.access-key', '', 'Y', 'admin', '七牛云 Kodo Access Key'),
 ('七牛 Secret Key', 'vizora.qiniu.secret-key', '', 'Y', 'admin', '七牛云 Kodo Secret Key'),
