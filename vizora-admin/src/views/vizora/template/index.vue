@@ -58,7 +58,7 @@
           <el-col :span="12"><el-form-item label="发布状态" prop="status"><el-select v-model="form.status" style="width: 100%"><el-option label="草稿" value="DRAFT" /><el-option label="已发布" value="PUBLISHED" /><el-option label="已下线" value="OFFLINE" /></el-select></el-form-item></el-col>
         </el-row>
         <el-form-item label="模板描述" prop="description"><el-input v-model="form.description" type="textarea" :rows="2" maxlength="500" show-word-limit /></el-form-item>
-        <el-form-item label="封面地址" prop="coverUrl"><el-input v-model="form.coverUrl" placeholder="填写七牛公开访问地址" /></el-form-item>
+        <el-form-item label="模板封面" prop="coverUrl"><image-upload v-model="form.coverUrl" :limit="1" :file-size="10" :file-type="['png', 'jpg', 'jpeg', 'webp']" /></el-form-item>
         <el-form-item label="提示词" prop="prompt"><el-input v-model="form.prompt" type="textarea" :rows="6" maxlength="2000" show-word-limit /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sortOrder" :min="0" :max="9999" /></el-form-item>
       </el-form>

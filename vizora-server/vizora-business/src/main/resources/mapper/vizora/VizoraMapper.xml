@@ -87,7 +87,7 @@
     <insert id="insertCreditPackage" parameterType="map" useGeneratedKeys="true" keyProperty="packageId">INSERT INTO viz_credit_package (package_name, credits, price, original_price, bonus_credits, enabled, sort_order, description, create_by) VALUES (#{packageName},#{credits},#{price},#{originalPrice},#{bonusCredits},#{enabled},#{sortOrder},#{description},#{createBy})</insert>
     <update id="updateCreditPackage" parameterType="map">UPDATE viz_credit_package SET package_name=#{packageName}, credits=#{credits}, price=#{price}, original_price=#{originalPrice}, bonus_credits=#{bonusCredits}, enabled=#{enabled}, sort_order=#{sortOrder}, description=#{description}, update_by=#{updateBy}, update_time=NOW() WHERE package_id=#{packageId}</update>
     <delete id="deleteCreditPackages">DELETE FROM viz_credit_package WHERE package_id IN <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach></delete>
-    <select id="selectTaskAdminList" parameterType="map" resultType="map">SELECT task_id AS taskId, user_id AS userId, task_type AS taskType, prompt, credit_cost AS creditCost, status, progress, provider_task_id AS providerTaskId, work_id AS workId, failure_reason AS failureReason, create_time AS createTime, update_time AS updateTime FROM viz_creation_task WHERE 1=1 <if test="status != null and status != ''">AND status=#{status}</if> <if test="keyword != null and keyword != ''">AND prompt LIKE CONCAT('%',#{keyword},'%')</if> ORDER BY task_id DESC</select>
+    <select id="selectTaskAdminList" parameterType="map" resultType="map">SELECT t.task_id AS taskId, t.user_id AS userId, u.user_name AS userName, u.phonenumber AS phoneNumber, u.email, t.task_type AS taskType, t.prompt, t.credit_cost AS creditCost, t.status, t.progress, t.provider_task_id AS providerTaskId, t.work_id AS workId, t.failure_reason AS failureReason, t.create_time AS createTime, t.update_time AS updateTime FROM viz_creation_task t LEFT JOIN sys_user u ON u.user_id=t.user_id WHERE 1=1 <if test="status != null and status != ''">AND t.status=#{status}</if> <if test="keyword != null and keyword != ''">AND (t.prompt LIKE CONCAT('%',#{keyword},'%') OR u.phonenumber LIKE CONCAT('%',#{keyword},'%') OR u.email LIKE CONCAT('%',#{keyword},'%'))</if> ORDER BY t.task_id DESC</select>
 
     <select id="selectWorkList" resultType="map">
         SELECT work_id AS workId, user_id AS userId, task_id AS taskId, title, work_type AS workType,
@@ -107,7 +107,7 @@
         WHERE w.deleted = 0
         <if test="status != null and status != ''">AND w.audit_status = #{status}</if>
         <if test="userId != null">AND w.user_id = #{userId}</if>
-        <if test="keyword != null and keyword != ''">AND w.title LIKE CONCAT('%', #{keyword}, '%')</if>
+        <if test="keyword != null and keyword != ''">AND (w.title LIKE CONCAT('%', #{keyword}, '%') OR u.phonenumber LIKE CONCAT('%', #{keyword}, '%') OR u.email LIKE CONCAT('%', #{keyword}, '%'))</if>
         ORDER BY w.work_id DESC
     </select>
 

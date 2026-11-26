@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form ref="queryRef" :model="queryParams" :inline="true" v-show="showSearch">
       <el-form-item label="作品名称" prop="keyword"><el-input v-model="queryParams.keyword" clearable placeholder="搜索作品名称" @keyup.enter="handleQuery" /></el-form-item>
-      <el-form-item label="用户ID" prop="userId"><el-input-number v-model="queryParams.userId" :min="1" :controls="false" /></el-form-item>
+      <el-form-item label="用户联系方式" prop="keyword"><el-input v-model="queryParams.keyword" clearable placeholder="作品名、手机号或邮箱" /></el-form-item>
       <el-form-item label="审核状态" prop="status">
         <el-select v-model="queryParams.status" clearable placeholder="全部状态" style="width: 150px">
           <el-option label="待审核" value="PENDING" /><el-option label="已通过" value="APPROVED" /><el-option label="已拒绝" value="REJECTED" />
