@@ -113,5 +113,6 @@ public class VizoraService
     public int updateCreditPackage(Map<String, Object> info) { return mapper.updateCreditPackage(info); }
     public int deleteCreditPackages(Long[] ids) { return mapper.deleteCreditPackages(ids); }
     public List<Map<String, Object>> adminTasks(Map<String, Object> query) { return mapper.selectTaskAdminList(query); }
+    public List<Map<String, Object>> dashboardStats(String period) { return mapper.selectDashboardStats(period); }
     public int moderateWork(Long workId, String status, String reason) { return mapper.updateWorkAuditStatus(workId, status, reason); }
 }

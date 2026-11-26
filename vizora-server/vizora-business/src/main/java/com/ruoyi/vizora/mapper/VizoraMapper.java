@@ -26,6 +26,7 @@ public interface VizoraMapper
     int updateCreditPackage(Map<String, Object> packageInfo);
     int deleteCreditPackages(Long[] packageIds);
     List<Map<String, Object>> selectTaskAdminList(Map<String, Object> query);
+    List<Map<String, Object>> selectDashboardStats(@Param("period") String period);
 
     List<Map<String, Object>> selectWorkList(@Param("userId") Long userId, @Param("status") String status);
     List<Map<String, Object>> selectAdminWorkList(Map<String, Object> query);

@@ -113,4 +113,7 @@ public class VizoraAdminController extends BaseController
     public AjaxResult editPackage(@RequestBody Map<String,Object> body) { body.put("updateBy", getUsername()); return toAjax(service.updateCreditPackage(body)); }
     @PreAuthorize("@ss.hasPermi('vizora:package:remove')") @DeleteMapping("/package/{ids}")
     public AjaxResult removePackage(@PathVariable Long[] ids) { return toAjax(service.deleteCreditPackages(ids)); }
+    @PreAuthorize("@ss.hasPermi('vizora:dashboard:list')")
+    @GetMapping("/dashboard/stats")
+    public AjaxResult dashboardStats(@RequestParam(defaultValue = "day") String period) { return success(service.dashboardStats(period)); }
 }

@@ -8,3 +8,4 @@ export const listPackages = () => request({ url: '/vizora/package/list', method:
 export const addPackage = data => request({ url: '/vizora/package', method: 'post', data })
 export const updatePackage = data => request({ url: '/vizora/package', method: 'put', data })
 export const delPackage = ids => request({ url: `/vizora/package/${ids}`, method: 'delete' })
+export const getDashboardStats = period => request({ url: '/vizora/dashboard/stats', method: 'get', params: { period } })
