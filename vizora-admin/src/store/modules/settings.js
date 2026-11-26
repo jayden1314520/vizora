@@ -22,7 +22,7 @@ const useSettingsStore = defineStore(
       tagsView: storageSetting.tagsView === undefined ? tagsView : storageSetting.tagsView,
       tagsViewPersist: storageSetting.tagsViewPersist === undefined ? tagsViewPersist : storageSetting.tagsViewPersist,
       tagsIcon: storageSetting.tagsIcon === undefined ? tagsIcon : storageSetting.tagsIcon,
-      tagsViewStyle: storageSetting.tagsViewStyle === undefined ? tagsViewStyle : storageSetting.tagsViewStyle,
+      tagsViewStyle: storageSetting.tagsViewStyle === 'card' ? 'chrome' : (storageSetting.tagsViewStyle === undefined ? tagsViewStyle : storageSetting.tagsViewStyle),
       fixedHeader: storageSetting.fixedHeader === undefined ? fixedHeader : storageSetting.fixedHeader,
       sidebarLogo: storageSetting.sidebarLogo === undefined ? sidebarLogo : storageSetting.sidebarLogo,
       dynamicTitle: storageSetting.dynamicTitle === undefined ? dynamicTitle : storageSetting.dynamicTitle,
