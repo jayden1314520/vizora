@@ -4,3 +4,4 @@ import { listPackages, addPackage } from '@/api/vizora/operation'
 const rows=ref([]), loading=ref(false), visible=ref(false), form=reactive({packageName:'',credits:1000,price:9.9,bonusCredits:0,enabled:1,sortOrder:0,description:''})
 async function load(){loading.value=true;try{const r=await listPackages();rows.value=r.rows||[]}finally{loading.value=false}} function openAdd(){visible.value=true} async function save(){await addPackage(form);visible.value=false;load()} load()
 </script>
+<style scoped>.app-container > .el-button{margin-bottom:16px}</style>

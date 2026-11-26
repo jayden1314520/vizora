@@ -7,3 +7,4 @@ const taskTypeOptions = computed(() => dictTaskTypes.value?.length ? dictTaskTyp
 const rows=ref([]), loading=ref(false), visible=ref(false), form=reactive({configName:'',provider:'',modelName:'',endpoint:'',apiKey:'',taskTypes:'',taskTypeList:[],enabled:1,sortOrder:0})
 async function load(){loading.value=true;try{const r=await listModels();rows.value=r.rows||[]}finally{loading.value=false}} function openAdd(){Object.assign(form,{configName:'',provider:'',modelName:'',endpoint:'',apiKey:'',taskTypes:'',taskTypeList:[],enabled:1,sortOrder:0});visible.value=true} async function save(){form.taskTypes=form.taskTypeList.join(',');await addModel(form);visible.value=false;load()} load()
 </script>
+<style scoped>.app-container > .el-button{margin-bottom:16px}</style>
