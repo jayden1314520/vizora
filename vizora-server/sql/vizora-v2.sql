@@ -18,8 +18,8 @@ DELETE FROM sys_role_menu WHERE menu_id = 3006;
 DELETE FROM sys_menu WHERE menu_id = 3006;
 INSERT IGNORE INTO sys_menu VALUES (3007, 'Web用户', 3000, 7, 'web-user', 'vizora/user/index', '', '', 1, 0, 'C', '0', '0', 'vizora:web-user:list', 'peoples', 'admin', NOW(), '', NULL, 'Web端注册用户');
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3007);
-INSERT IGNORE INTO sys_menu VALUES (3008, '运营看板', 3000, 1, 'dashboard', 'index', '', '', 1, 0, 'C', '0', '0', 'vizora:dashboard:list', 'chart', 'admin', NOW(), '', NULL, '真实运营统计');
-INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES (1, 3008);
+DELETE FROM sys_role_menu WHERE menu_id = 3008;
+DELETE FROM sys_menu WHERE menu_id = 3008;
 INSERT IGNORE INTO sys_job (job_id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, create_by, create_time, update_by, update_time, remark)
 VALUES (8, 'VIZORA运营看板统计刷新', 'DEFAULT', 'vizoraDashboardTask.refresh', '0 0/10 * * * ?', '3', '1', '0', 'admin', NOW(), '', NULL, '每10分钟刷新运营统计任务');
 INSERT IGNORE INTO sys_dict_type (dict_name, dict_type, status, create_by, create_time, remark) VALUES ('AI任务类型', 'vizora_task_type', '0', 'admin', NOW(), '模型支持的生成任务类型');
