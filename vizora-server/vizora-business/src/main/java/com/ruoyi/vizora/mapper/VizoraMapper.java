@@ -24,6 +24,8 @@ public interface VizoraMapper
     int insertWork(Map<String, Object> work);
     int updateWorkStatus(@Param("workId") Long workId, @Param("status") String status,
                          @Param("outputFileId") Long outputFileId, @Param("failureReason") String failureReason);
+    int updateWorkAuditStatus(@Param("workId") Long workId, @Param("auditStatus") String auditStatus,
+                              @Param("auditReason") String auditReason);
     int deleteWork(@Param("workId") Long workId, @Param("userId") Long userId);
 
     int insertCreationTask(Map<String, Object> task);

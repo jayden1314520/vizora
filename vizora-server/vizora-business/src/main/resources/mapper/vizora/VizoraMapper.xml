@@ -123,6 +123,12 @@
         WHERE work_id = #{workId} AND deleted = 0
     </update>
 
+    <update id="updateWorkAuditStatus">
+        UPDATE viz_work SET audit_status = #{auditStatus},
+            audit_reason = #{auditReason}, update_time = NOW()
+        WHERE work_id = #{workId} AND deleted = 0
+    </update>
+
     <update id="deleteWork">
         UPDATE viz_work SET deleted = 1, update_time = NOW()
         WHERE work_id = #{workId} AND user_id = #{userId} AND deleted = 0

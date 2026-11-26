@@ -107,8 +107,8 @@ public class QiniuStorageService
     public String buildAccessUrl(Map<String, Object> file, long expiresSeconds)
     {
         Object publicValue = file.get("isPublic");
-        boolean publicAsset = publicValue instanceof Boolean value ? value
-                : publicValue instanceof Number value && value.intValue() == 1;
+        boolean publicAsset = publicValue instanceof Boolean booleanValue ? booleanValue
+                : publicValue instanceof Number numberValue && numberValue.intValue() == 1;
         String domain = publicAsset ? properties.getPublicDomain() : properties.getPrivateDomain();
         if (StringUtils.isBlank(domain))
         {

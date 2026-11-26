@@ -104,5 +104,5 @@ public class VizoraService
     public int insertTemplate(Map<String, Object> template) { return mapper.insertTemplate(template); }
     public int updateTemplate(Map<String, Object> template) { return mapper.updateTemplate(template); }
     public int deleteTemplates(Long[] ids) { return mapper.deleteTemplates(ids); }
-    public int moderateWork(Long workId, String status, String reason) { return mapper.updateWorkStatus(workId, status, null, reason); }
+    public int moderateWork(Long workId, String status, String reason) { return mapper.updateWorkAuditStatus(workId, status, reason); }
 }
