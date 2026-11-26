@@ -75,10 +75,11 @@ const getLogoTextColor = computed(() => {
     width: 100%;
 
     & .sidebar-logo-mark {
-      display:inline-block;width:32px;height:32px;border:3px solid #b9ef45;transform:rotate(45deg);position:relative;
+      display:inline-block;width:34px;height:34px;border:2px solid #b9ef45;border-radius:11px;position:relative;overflow:hidden;
       vertical-align: middle;
       margin-right: 12px;
-      & span{display:block;width:9px;height:9px;border-radius:50%;background:#b9ef45;position:absolute;left:9px;top:9px}
+      & span{display:block;width:10px;height:10px;border-radius:50%;background:#b9ef45;position:absolute;left:10px;top:10px;box-shadow:0 0 0 5px rgba(185,239,69,.12)}
+      &:after{content:'';position:absolute;width:46px;height:2px;background:#b9ef45;left:-8px;top:15px;transform:rotate(-45deg);opacity:.9}
     }
 
     & .sidebar-title {
